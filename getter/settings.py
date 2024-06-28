@@ -42,8 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
-    'logger',
+    'rest_framework.authtoken',
     'corsheaders',
+    'logger',
 ]
 
 MIDDLEWARE = [
@@ -64,6 +65,10 @@ REST_FRAMEWORK = {
             'rest_framework.renderers.JSONRenderer',
         ),
 
+        'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        ),
+
         'DEFAULT_THROTTLE_CLASSES': [
         'rest_framework.throttling.AnonRateThrottle',
         'rest_framework.throttling.UserRateThrottle'
@@ -74,10 +79,20 @@ REST_FRAMEWORK = {
         }
     }
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',  # default
+]
+
 ROOT_URLCONF = 'getter.urls'
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # Add your React app's URL
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "https://ethscans.io",
+]
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:5173',
     'http://localhost:5174',
