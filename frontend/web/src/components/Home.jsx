@@ -1,25 +1,71 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 import profileImage from "../assets/Profile.webp";
+
+const API_USER_ENDPOINT = 'http://127.0.0.1:8000/api/user/'; // Replace with your actual endpoint
 
 function Home() {
   const [isEditing, setIsEditing] = useState(false);
   const [userData, setUserData] = useState({
-    firstName: "John Benedict",
-    lastName: "Bernardo",
-    email: "johnbenedict@gmail.com",
-    phone: "0912 345 6789",
-    barangay: "Amoros",
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    barangay: "",
   });
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(API_USER_ENDPOINT, {
+          headers: {
+            'Authorization': `Token ${token}`
+          }
+        });
+        const data = response.data;
+        setUserData({
+          firstName: data.first_name,
+          lastName: data.last_name,
+          email: data.email,
+          phone: data.profile.phone,
+          barangay: data.profile.barangay,
+        });
+      } catch (error) {
+        console.error('Error fetching user data:', error.response ? error.response.data : error.message);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const handleEdit = () => {
     setIsEditing(true);
   };
 
-  const handleSave = () => {
-    setIsEditing(false);
+  const handleSave = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.put(API_USER_ENDPOINT, {
+        first_name: userData.firstName,
+        last_name: userData.lastName,
+        email: userData.email,
+        profile: {
+          phone: userData.phone,
+          barangay: userData.barangay,
+        }
+      }, {
+        headers: {
+          'Authorization': `Token ${token}`
+        }
+      });
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error updating user data:', error.response ? error.response.data : error.message);
+    }
   };
 
   const handleChange = (e) => {
@@ -31,6 +77,7 @@ function Home() {
   };
 
   const handleLogout = () => {
+    localStorage.removeItem('token');
     navigate('/login');
   };
 
