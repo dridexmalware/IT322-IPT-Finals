@@ -1,8 +1,26 @@
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import axios from 'axios';
 import { Link } from 'expo-router';
 
 export default function EditUsernamePage() {
+  const [username, setUsername] = useState('');
+
+  const handleSave = async () => {
+    try {
+      const response = await axios.put('http://localhost:8000/api/user/', {
+        username: username,
+      }, {
+        headers: {
+          'Authorization': `Token ${yourAuthToken}` // Include your auth token here
+        }
+      });
+      Alert.alert('Success', 'Username updated');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to update username');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -14,15 +32,10 @@ export default function EditUsernamePage() {
         <Text style={styles.headerTitle}>Edit Username</Text>
       </View>
       <View style={styles.contentContainer}>
-        <Text style={styles.currentValue}>Darskie</Text>
-        <Text style={styles.label}>Username</Text>
-        <TextInput style={styles.input} placeholder="New Username" />
-        <TextInput style={styles.input} placeholder="Confirm Username" />
-        <Link href="/profile/Save" asChild>
-          <TouchableOpacity style={styles.saveButton}>
-            <Text style={styles.saveButtonText}>Save</Text>
-          </TouchableOpacity>
-        </Link>
+        <TextInput style={styles.input} placeholder="New Username" value={username} onChangeText={setUsername} />
+        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+          <Text style={styles.saveButtonText}>Save</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );

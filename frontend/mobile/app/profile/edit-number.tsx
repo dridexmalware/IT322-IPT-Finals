@@ -1,8 +1,28 @@
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import axios from 'axios';
 import { Link } from 'expo-router';
 
 export default function EditNumberPage() {
+  const [phone, setPhone] = useState('');
+
+  const handleSave = async () => {
+    try {
+      const response = await axios.put('http://localhost:8000/api/user/', {
+        profile: {
+          phone: phone,
+        },
+      }, {
+        headers: {
+          'Authorization': `Token ${yourAuthToken}` // Include your auth token here
+        }
+      });
+      Alert.alert('Success', 'Number updated');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to update number');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -14,15 +34,10 @@ export default function EditNumberPage() {
         <Text style={styles.headerTitle}>Edit Number</Text>
       </View>
       <View style={styles.contentContainer}>
-        <Text style={styles.currentValue}>+63 912 345 6789</Text>
-        <Text style={styles.label}>Mobile Number</Text>
-        <TextInput style={styles.input} placeholder="New Mobile Number" keyboardType="phone-pad" />
-        <TextInput style={styles.input} placeholder="Confirm Mobile Number" keyboardType="phone-pad" />
-        <Link href="/profile/Save" asChild>
-          <TouchableOpacity style={styles.saveButton}>
-            <Text style={styles.saveButtonText}>Save</Text>
-          </TouchableOpacity>
-        </Link>
+        <TextInput style={styles.input} placeholder="New Mobile Number" value={phone} onChangeText={setPhone} keyboardType="phone-pad" />
+        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+          <Text style={styles.saveButtonText}>Save</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );

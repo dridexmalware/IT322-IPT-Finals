@@ -1,8 +1,28 @@
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import axios from 'axios';
 import { Link } from 'expo-router';
 
 export default function EditNamePage() {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+
+  const handleSave = async () => {
+    try {
+      const response = await axios.put('http://localhost:8000/api/user/', {
+        first_name: firstName,
+        last_name: lastName,
+      }, {
+        headers: {
+          'Authorization': `Token ${yourAuthToken}` // Include your auth token here
+        }
+      });
+      Alert.alert('Success', 'Name updated');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to update name');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -14,15 +34,11 @@ export default function EditNamePage() {
         <Text style={styles.headerTitle}>Edit Name</Text>
       </View>
       <View style={styles.contentContainer}>
-        <Text style={styles.currentValue}>Dario Cruz Miñoza</Text>
-        <Text style={styles.label}>Full Name</Text>
-        <TextInput style={styles.input} placeholder="New First Name" />
-        <TextInput style={styles.input} placeholder="New Last Name" />
-        <Link href="/profile/Save" asChild>
-          <TouchableOpacity style={styles.saveButton}>
-            <Text style={styles.saveButtonText}>Save</Text>
-          </TouchableOpacity>
-        </Link>
+        <TextInput style={styles.input} placeholder="New First Name" value={firstName} onChangeText={setFirstName} />
+        <TextInput style={styles.input} placeholder="New Last Name" value={lastName} onChangeText={setLastName} />
+        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+          <Text style={styles.saveButtonText}>Save</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );

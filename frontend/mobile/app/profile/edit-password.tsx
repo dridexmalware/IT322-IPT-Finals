@@ -1,8 +1,32 @@
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import axios from 'axios';
 import { Link } from 'expo-router';
 
 export default function EditPasswordPage() {
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const handleSave = async () => {
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match');
+      return;
+    }
+
+    try {
+      const response = await axios.put('http://localhost:8000/api/user/', {
+        password: password,
+      }, {
+        headers: {
+          'Authorization': `Token ${yourAuthToken}` // Include your auth token here
+        }
+      });
+      Alert.alert('Success', 'Password updated');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to update password');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -14,15 +38,11 @@ export default function EditPasswordPage() {
         <Text style={styles.headerTitle}>Edit Password</Text>
       </View>
       <View style={styles.contentContainer}>
-        <Text style={styles.currentValue}>FLAT-UNO</Text>
-        <Text style={styles.label}>Password</Text>
-        <TextInput style={styles.input} placeholder="New Password" secureTextEntry />
-        <TextInput style={styles.input} placeholder="Confirm Password" secureTextEntry />
-        <Link href="/profile/Save" asChild>
-          <TouchableOpacity style={styles.saveButton}>
-            <Text style={styles.saveButtonText}>Save</Text>
-          </TouchableOpacity>
-        </Link>
+        <TextInput style={styles.input} placeholder="New Password" value={password} onChangeText={setPassword} secureTextEntry />
+        <TextInput style={styles.input} placeholder="Confirm Password" value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry />
+        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+          <Text style={styles.saveButtonText}>Save</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
