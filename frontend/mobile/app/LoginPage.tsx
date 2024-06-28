@@ -1,8 +1,24 @@
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import axios from 'axios';
 import { Link } from 'expo-router';
 
 export default function LoginPage() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post('http://localhost:8000/api/login/', {
+        email: email,
+        password: password,
+      });
+      Alert.alert('Success', 'Login successful');
+    } catch (error) {
+      Alert.alert('Error', 'Login failed');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Link href="/" asChild>
@@ -10,13 +26,11 @@ export default function LoginPage() {
           <Text style={styles.backButtonText}>&lt;</Text>
         </TouchableOpacity>
       </Link>
-      <TextInput style={styles.input} placeholder="Email" keyboardType="email-address" />
-      <TextInput style={styles.input} placeholder="Password" secureTextEntry />
-      <Link href="profile/Profile" asChild>
-      <TouchableOpacity style={styles.loginButton}>
+      <TextInput style={styles.input} placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" />
+      <TextInput style={styles.input} placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry />
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
         <Text style={styles.loginButtonText}>Login</Text>
-        </TouchableOpacity>
-      </Link>
+      </TouchableOpacity>
       <View style={styles.separatorContainer}>
         <View style={styles.separatorLine} />
         <Text style={styles.separatorText}>or</Text>

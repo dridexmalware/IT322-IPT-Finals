@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 // app/RegisterPage.tsx
+=======
+>>>>>>> ebf6d1fd3b85eb6a8b4d76bac89bb190d8c8ba05
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import axios from 'axios';
@@ -9,6 +12,7 @@ const API_ENDPOINTS = {
 };
 
 export default function RegisterPage() {
+<<<<<<< HEAD
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -58,6 +62,31 @@ export default function RegisterPage() {
     );
   }
 
+=======
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [phone, setPhone] = useState('');
+  const [barangay, setBarangay] = useState('');
+
+  const handleRegister = async () => {
+    try {
+      const response = await axios.post('http://localhost:8000/api/register/', {
+        first_name: firstName,
+        last_name: lastName,
+        email: email,
+        password: password,
+        phone: phone,
+        barangay: barangay,
+      });
+      Alert.alert('Success', 'Registration successful');
+    } catch (error) {
+      Alert.alert('Error', 'Registration failed');
+    }
+  };
+
+>>>>>>> ebf6d1fd3b85eb6a8b4d76bac89bb190d8c8ba05
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
@@ -68,6 +97,7 @@ export default function RegisterPage() {
         </Link>
         <Text style={styles.header}>Create an account</Text>
       </View>
+<<<<<<< HEAD
       <TextInput
         style={styles.input}
         placeholder="First Name"
@@ -107,6 +137,14 @@ export default function RegisterPage() {
         value={formData.barangay}
         onChangeText={(value) => handleChange('barangay', value)}
       />
+=======
+      <TextInput style={styles.input} placeholder="First Name" value={firstName} onChangeText={setFirstName} />
+      <TextInput style={styles.input} placeholder="Last Name" value={lastName} onChangeText={setLastName} />
+      <TextInput style={styles.input} placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" />
+      <TextInput style={styles.input} placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry />
+      <TextInput style={styles.input} placeholder="Phone" value={phone} onChangeText={setPhone} keyboardType="phone-pad" />
+      <TextInput style={styles.input} placeholder="Barangay" value={barangay} onChangeText={setBarangay} />
+>>>>>>> ebf6d1fd3b85eb6a8b4d76bac89bb190d8c8ba05
       <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
         <Text style={styles.registerButtonText}>Register</Text>
       </TouchableOpacity>
