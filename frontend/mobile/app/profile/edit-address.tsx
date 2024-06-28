@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import axios from 'axios';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function EditAddressPage() {
   const [barangay, setBarangay] = useState('');
   const [city, setCity] = useState('');
+  const router = useRouter(); // Initialize router for navigation
 
   const handleSave = async () => {
     try {
+      const token = await AsyncStorage.getItem('token'); // Retrieve token from AsyncStorage
       const response = await axios.put('http://localhost:8000/api/user/', {
         profile: {
           barangay: barangay,
@@ -16,10 +19,11 @@ export default function EditAddressPage() {
         },
       }, {
         headers: {
-          'Authorization': `Token ${yourAuthToken}` 
+          'Authorization': `Token ${token}`, // Include the token in headers
         }
       });
       Alert.alert('Success', 'Address updated');
+      router.push('/profile/Profile'); // Navigate to profile page after successful update
     } catch (error) {
       Alert.alert('Error', 'Failed to update address');
     }
@@ -28,7 +32,7 @@ export default function EditAddressPage() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Link href="/profile/edit-profile" asChild>
+        <Link href="/profile/Profile" asChild>
           <TouchableOpacity style={styles.backButton}>
             <Text style={styles.backButtonText}>&lt;</Text>
           </TouchableOpacity>

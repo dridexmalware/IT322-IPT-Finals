@@ -21,6 +21,7 @@ function Home() {
     const fetchUserData = async () => {
       try {
         const token = localStorage.getItem('token');
+        console.log(token)
         const response = await axios.get(API_USER_ENDPOINT, {
           headers: {
             'Authorization': `Token ${token}`

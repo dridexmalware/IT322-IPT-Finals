@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import axios from 'axios';
-import { Link } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Link, useRouter } from 'expo-router';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const router = useRouter();
 
   const handleLogin = async () => {
     try {
@@ -13,7 +15,14 @@ export default function LoginPage() {
         email: email,
         password: password,
       });
+
+      const token = response.data.token; // Adjust this based on your API response structure
+      await AsyncStorage.setItem('token', token);
+
+      console.log(response.data)
       Alert.alert('Success', 'Login successful');
+      router.push('/profile/Profile');
+      
     } catch (error) {
       Alert.alert('Error', 'Login failed');
     }

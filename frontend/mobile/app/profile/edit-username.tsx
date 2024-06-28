@@ -1,21 +1,25 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import axios from 'axios';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function EditUsernamePage() {
   const [username, setUsername] = useState('');
+  const router = useRouter();
 
   const handleSave = async () => {
     try {
+      const token = await AsyncStorage.getItem('token');
       const response = await axios.put('http://localhost:8000/api/user/', {
         username: username,
       }, {
         headers: {
-          'Authorization': `Token ${yourAuthToken}` // Include your auth token here
+          'Authorization': `Token ${token}`, // Include the auth token here
         }
       });
       Alert.alert('Success', 'Username updated');
+      router.push('/profile/Profile'); // Navigate to profile page after successful update
     } catch (error) {
       Alert.alert('Error', 'Failed to update username');
     }
@@ -24,7 +28,7 @@ export default function EditUsernamePage() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Link href="/profile/edit-profile" asChild>
+        <Link href="/profile/Profile" asChild>
           <TouchableOpacity style={styles.backButton}>
             <Text style={styles.backButtonText}>&lt;</Text>
           </TouchableOpacity>
@@ -66,17 +70,6 @@ const styles = StyleSheet.create({
   contentContainer: {
     padding: 20,
     alignItems: 'center',
-  },
-  currentValue: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#007100',
-    marginBottom: 10,
-  },
-  label: {
-    fontSize: 16,
-    color: '#888888',
-    marginBottom: 20,
   },
   input: {
     width: '80%',

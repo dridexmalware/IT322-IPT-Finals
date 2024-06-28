@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import axios from 'axios';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 
 export default function RegisterPage() {
   const [firstName, setFirstName] = useState('');
@@ -10,8 +10,42 @@ export default function RegisterPage() {
   const [password, setPassword] = useState('');
   const [phone, setPhone] = useState('');
   const [barangay, setBarangay] = useState('');
+  const router = useRouter();
+
+  const validateEmail = (email: any) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePassword = (password: any) => {
+    // Minimum eight characters, at least one letter and one number
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    return passwordRegex.test(password);
+  };
+
+  const validatePhone = (phone: any) => {
+    // Phone number should be 10 digits
+    const phoneRegex = /^\d{10}$/;
+    return phoneRegex.test(phone);
+  };
 
   const handleRegister = async () => {
+    console.log("here1")
+    if (!validateEmail(email)) {
+      Alert.alert('Error', 'Invalid email address');
+      return;
+    }
+    if (!validatePassword(password)) {
+      Alert.alert('Error', 'Password must be at least 8 characters long and contain both letters and numbers');
+      return;
+    }
+    if (!validatePhone(phone)) {
+      Alert.alert('Error', 'Phone number must be 10 digits');
+      return;
+    }
+
+    console.log("here")
+
     try {
       const response = await axios.post('http://localhost:8000/api/register/', {
         first_name: firstName,
@@ -21,8 +55,11 @@ export default function RegisterPage() {
         phone: phone,
         barangay: barangay,
       });
+      console.log(response.data);
       Alert.alert('Success', 'Registration successful');
+      router.push('/LoginPage');
     } catch (error) {
+      console.log(error);
       Alert.alert('Error', 'Registration failed');
     }
   };
