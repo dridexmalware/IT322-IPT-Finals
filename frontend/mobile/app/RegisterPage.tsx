@@ -1,8 +1,63 @@
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+// app/RegisterPage.tsx
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import axios from 'axios';
 import { Link } from 'expo-router';
 
+const API_ENDPOINTS = {
+  register: 'http://127.0.0.1:8000/api/register/', // Update with your Django server's IP if running on a device
+};
+
 export default function RegisterPage() {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    phone: '',
+    barangay: '',
+  });
+  const [isRegistered, setIsRegistered] = useState(false);
+
+  const handleChange = (name: string, value: string) => {
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleRegister = async () => {
+    try {
+      const response = await axios.post(API_ENDPOINTS.register, {
+        email: formData.email,
+        password: formData.password,
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        phone: formData.phone,
+        barangay: formData.barangay,
+      });
+      console.log('Registration successful:', response.data);
+      Alert.alert('Success', 'Registration successful');
+      setIsRegistered(true);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('Registration failed:', error.response ? error.response.data : error.message);
+        Alert.alert('Error', error.response?.data?.error || 'Registration failed');
+      } else {
+        console.error('Registration failed:', error);
+        Alert.alert('Error', 'Registration failed');
+      }
+    }
+  };
+
+  if (isRegistered) {
+    return (
+      <Link href="./profile/Profile">
+        <Text>Go to Profile</Text>
+      </Link>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
@@ -13,17 +68,48 @@ export default function RegisterPage() {
         </Link>
         <Text style={styles.header}>Create an account</Text>
       </View>
-      <TextInput style={styles.input} placeholder="First Name" />
-      <TextInput style={styles.input} placeholder="Last Name" />
-      <TextInput style={styles.input} placeholder="Email" keyboardType="email-address" />
-      <TextInput style={styles.input} placeholder="Password" secureTextEntry />
-      <TextInput style={styles.input} placeholder="Phone" keyboardType="phone-pad" />
-      <TextInput style={styles.input} placeholder="Barangay" />
-      <Link href="/LoginPage" asChild>
-        <TouchableOpacity style={styles.registerButton}>
-          <Text style={styles.registerButtonText}>Register</Text>
-        </TouchableOpacity>
-      </Link>
+      <TextInput
+        style={styles.input}
+        placeholder="First Name"
+        value={formData.firstName}
+        onChangeText={(value) => handleChange('firstName', value)}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Last Name"
+        value={formData.lastName}
+        onChangeText={(value) => handleChange('lastName', value)}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        value={formData.email}
+        onChangeText={(value) => handleChange('email', value)}
+        keyboardType="email-address"
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        value={formData.password}
+        onChangeText={(value) => handleChange('password', value)}
+        secureTextEntry
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Phone"
+        value={formData.phone}
+        onChangeText={(value) => handleChange('phone', value)}
+        keyboardType="phone-pad"
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Barangay"
+        value={formData.barangay}
+        onChangeText={(value) => handleChange('barangay', value)}
+      />
+      <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
+        <Text style={styles.registerButtonText}>Register</Text>
+      </TouchableOpacity>
       <View style={styles.separatorContainer}>
         <View style={styles.separatorLine} />
         <Text style={styles.separatorText}>or</Text>

@@ -81,6 +81,20 @@ function Home() {
     navigate('/login');
   };
 
+  const handleDelete = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(API_USER_ENDPOINT, {
+        headers: {
+          'Authorization': `Token ${token}`
+        }
+      });
+      handleLogout();
+    } catch (error) {
+      console.error('Error deleting user account:', error.response ? error.response.data : error.message);
+    }
+  };
+
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
       <div className="flex w-full max-w-4xl h-4/5 bg-white shadow-lg rounded-lg overflow-hidden">
@@ -145,6 +159,13 @@ function Home() {
                 className="w-full py-3 bg-green-600 text-white rounded hover:bg-green-500"
               >
                 Save
+              </button>
+              <button
+                type="button"
+                onClick={handleDelete}
+                className="w-full mt-4 py-3 bg-red-600 text-white rounded hover:bg-red-500"
+              >
+                Delete Account
               </button>
             </form>
           ) : (
