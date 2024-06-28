@@ -1,43 +1,10 @@
 from django.db import models
+from django.contrib.auth.models import User
 
-class firstname(models.Model):
-    keys = models.CharField(max_length=255)
-    datetime = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.keys
-
-class lastname(models.Model):
-    keys = models.CharField(max_length=255)
-    datetime = models.DateTimeField(auto_now=True)
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    phone = models.CharField(max_length=15)
+    barangay = models.CharField(max_length=255)
 
     def __str__(self):
-        return self.keys
-
-class email(models.Model):
-    keys = models.CharField(max_length=255)
-    datetime = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.keys
-    
-class password(models.Model):
-    keys = models.CharField(max_length=255)
-    datetime = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.keys
-
-class phone(models.Model):
-    keys = models.IntegerField()
-    datetime = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return str(self.keys)
-    
-class barangay(models.Model):
-    keys = models.CharField(max_length=255)
-    datetime = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.keys
+        return f'{self.user.email} - Profile'
