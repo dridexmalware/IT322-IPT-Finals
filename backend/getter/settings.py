@@ -28,7 +28,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost',
                  '127.0.0.1',
-                 'getter1234.pythonanywhere.com']
+                 'getter1234.pythonanywhere.com',
+                 '192.168.137.1']
 
 
 # Application definition
@@ -40,11 +41,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
     'logger',
+    'djoser'
 ]
 
 MIDDLEWARE = [
@@ -58,9 +59,9 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 ]
 REST_FRAMEWORK = {
-        # 'DEFAULT_PERMISSION_CLASSES': [
-        #     'rest_framework.permissions.IsAuthenticatedOrReadOnly',
-        #     ],
+        'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.AllowAny',
+        ),
         'DEFAULT_RENDERER_CLASSES': (
             'rest_framework.renderers.JSONRenderer',
         ),
@@ -69,14 +70,14 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
         ),
 
-        'DEFAULT_THROTTLE_CLASSES': [
-        'rest_framework.throttling.AnonRateThrottle',
-        'rest_framework.throttling.UserRateThrottle'
-        ],
-        'DEFAULT_THROTTLE_RATES': {
-            'anon': '100/day',
-            'user': '1000/day'
-        }
+        # 'DEFAULT_THROTTLE_CLASSES': [
+        # 'rest_framework.throttling.AnonRateThrottle',
+        # 'rest_framework.throttling.UserRateThrottle'
+        # ],
+        # 'DEFAULT_THROTTLE_RATES': {
+        #     'anon': '100/day',
+        #     'user': '1000/day'
+        # }
     }
 
 AUTHENTICATION_BACKENDS = [
@@ -86,18 +87,30 @@ AUTHENTICATION_BACKENDS = [
 ROOT_URLCONF = 'getter.urls'
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # Add your React app's URL
+    "http://localhost:3000",
     "http://localhost:5173",
     "http://localhost:5174",
     "https://ethscans.io",
     "http://localhost:19006",
+    "http://192.168.137.1:8000",
+    "http://172.20.8.151:8081",
+    "http://localhost:8081",
+    "http://127.0.0.1:8000"
+]
+
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://\w+\.example\.com$",
 ]
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:5173',
     'http://localhost:5174',
     'https://ethscans.io',
+    "http://192.168.137.1:8000",
+    "http://172.20.8.151:8081",
+    "http://localhost:8081"
 )
 
 TEMPLATES = [
@@ -172,3 +185,26 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Mail Configuration
+
+EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
+EMAIL_HOST_USER = 'a9e1584adef95e'
+EMAIL_HOST_PASSWORD = 'b03bb958e6c4f0'
+EMAIL_PORT = '2525'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+
+DJOSER = {
+    'USER_CREATE_PASSWORD_RETYPE': True,
+    'SET_PASSWORD_RETYPE': True,
+    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
+    'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
+    'ACTIVATION_URL': '#/activate/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': True,
+    'SERIALIZERS': {
+        'user_create': 'getter.serializers.CustomUserCreateSerializer',
+        'user': 'getter.serializers.CustomUserSerializer',
+        'current_user': 'getter.serializers.CustomUserSerializer',
+    },
+}

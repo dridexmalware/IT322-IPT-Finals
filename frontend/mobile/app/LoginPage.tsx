@@ -16,7 +16,7 @@ export default function LoginPage() {
         password: password,
       });
 
-      const token = response.data.token; // Adjust this based on your API response structure
+      const token = response.data.token; 
       await AsyncStorage.setItem('token', token);
 
       console.log(response.data)

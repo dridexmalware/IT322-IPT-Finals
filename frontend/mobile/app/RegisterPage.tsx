@@ -1,68 +1,13 @@
-<<<<<<< HEAD
-// app/RegisterPage.tsx
-=======
->>>>>>> ebf6d1fd3b85eb6a8b4d76bac89bb190d8c8ba05
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import axios from 'axios';
 import { Link, useRouter } from 'expo-router';
 
 const API_ENDPOINTS = {
-  register: 'http://127.0.0.1:8000/api/register/', // Update with your Django server's IP if running on a device
+  register: 'http://127.0.0.1:8000/auth/users/', 
 };
 
 export default function RegisterPage() {
-<<<<<<< HEAD
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    phone: '',
-    barangay: '',
-  });
-  const [isRegistered, setIsRegistered] = useState(false);
-
-  const handleChange = (name: string, value: string) => {
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const handleRegister = async () => {
-    try {
-      const response = await axios.post(API_ENDPOINTS.register, {
-        email: formData.email,
-        password: formData.password,
-        first_name: formData.firstName,
-        last_name: formData.lastName,
-        phone: formData.phone,
-        barangay: formData.barangay,
-      });
-      console.log('Registration successful:', response.data);
-      Alert.alert('Success', 'Registration successful');
-      setIsRegistered(true);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error('Registration failed:', error.response ? error.response.data : error.message);
-        Alert.alert('Error', error.response?.data?.error || 'Registration failed');
-      } else {
-        console.error('Registration failed:', error);
-        Alert.alert('Error', 'Registration failed');
-      }
-    }
-  };
-
-  if (isRegistered) {
-    return (
-      <Link href="./profile/Profile">
-        <Text>Go to Profile</Text>
-      </Link>
-    );
-  }
-
-=======
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -71,42 +16,45 @@ export default function RegisterPage() {
   const [barangay, setBarangay] = useState('');
   const router = useRouter();
 
-  const validateEmail = (email: any) => {
+  const validateEmail = (email : any) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
-  const validatePassword = (password: any) => {
+  const validatePassword = (password : any) => {
     // Minimum eight characters, at least one letter and one number
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
     return passwordRegex.test(password);
   };
 
-  const validatePhone = (phone: any) => {
+  const validatePhone = (phone : any) => {
     // Phone number should be 10 digits
     const phoneRegex = /^\d{10}$/;
     return phoneRegex.test(phone);
   };
 
   const handleRegister = async () => {
-    console.log("here1")
+    console.log("Validating inputs...");
     if (!validateEmail(email)) {
       Alert.alert('Error', 'Invalid email address');
+      console.log('Invalid email');
       return;
     }
     if (!validatePassword(password)) {
       Alert.alert('Error', 'Password must be at least 8 characters long and contain both letters and numbers');
+      console.log('Invalid password');
       return;
     }
     if (!validatePhone(phone)) {
       Alert.alert('Error', 'Phone number must be 10 digits');
+      console.log('Invalid phone');
       return;
     }
 
-    console.log("here")
+    console.log("Inputs validated, proceeding to registration...");
 
     try {
-      const response = await axios.post('http://localhost:8000/api/register/', {
+      const response = await axios.post(API_ENDPOINTS.register, {
         first_name: firstName,
         last_name: lastName,
         email: email,
@@ -123,7 +71,6 @@ export default function RegisterPage() {
     }
   };
 
->>>>>>> ebf6d1fd3b85eb6a8b4d76bac89bb190d8c8ba05
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
@@ -134,54 +81,12 @@ export default function RegisterPage() {
         </Link>
         <Text style={styles.header}>Create an account</Text>
       </View>
-<<<<<<< HEAD
-      <TextInput
-        style={styles.input}
-        placeholder="First Name"
-        value={formData.firstName}
-        onChangeText={(value) => handleChange('firstName', value)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Last Name"
-        value={formData.lastName}
-        onChangeText={(value) => handleChange('lastName', value)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={formData.email}
-        onChangeText={(value) => handleChange('email', value)}
-        keyboardType="email-address"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={formData.password}
-        onChangeText={(value) => handleChange('password', value)}
-        secureTextEntry
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Phone"
-        value={formData.phone}
-        onChangeText={(value) => handleChange('phone', value)}
-        keyboardType="phone-pad"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Barangay"
-        value={formData.barangay}
-        onChangeText={(value) => handleChange('barangay', value)}
-      />
-=======
       <TextInput style={styles.input} placeholder="First Name" value={firstName} onChangeText={setFirstName} />
       <TextInput style={styles.input} placeholder="Last Name" value={lastName} onChangeText={setLastName} />
       <TextInput style={styles.input} placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" />
       <TextInput style={styles.input} placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry />
       <TextInput style={styles.input} placeholder="Phone" value={phone} onChangeText={setPhone} keyboardType="phone-pad" />
       <TextInput style={styles.input} placeholder="Barangay" value={barangay} onChangeText={setBarangay} />
->>>>>>> ebf6d1fd3b85eb6a8b4d76bac89bb190d8c8ba05
       <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
         <Text style={styles.registerButtonText}>Register</Text>
       </TouchableOpacity>

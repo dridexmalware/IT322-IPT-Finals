@@ -4,7 +4,7 @@ import axios from "axios";
 import background from "../assets/Register-Image.png";
 
 const API_ENDPOINTS = {
-  register: "http://127.0.0.1:8000/api/register/",
+  register: "http://127.0.0.1:8000/auth/users/",
 };
 
 function Register() {

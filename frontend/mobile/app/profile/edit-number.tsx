@@ -17,7 +17,7 @@ export default function EditNumberPage() {
         },
       }, {
         headers: {
-          'Authorization': `Token ${token}`, // Include the auth token here
+          'Authorization': `Token ${token}`,
         }
       });
       Alert.alert('Success', 'Number updated');
