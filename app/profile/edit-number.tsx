@@ -1,12 +1,36 @@
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import { Link } from 'expo-router';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+// import axios from 'axios';
+import { Link, useRouter } from 'expo-router';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function EditNumberPage() {
+  const [phone, setPhone] = useState('');
+  const router = useRouter();
+
+  const handleSave = async () => {
+    try {
+      // const token = await AsyncStorage.getItem('token');
+      // const response = await axios.put('http://localhost:8000/api/user/', {
+      //   profile: {
+      //     phone: phone,
+      //   },
+      // }, {
+      //   headers: {
+      //     'Authorization': `Token ${token}`,
+      //   }
+      // });
+      // Alert.alert('Success', 'Number updated');
+      router.push('/profile/Save'); // Navigate to profile page after successful update
+    } catch (error) {
+      Alert.alert('Error', 'Failed to update number');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Link href="/profile/edit-profile" asChild>
+        <Link href="/profile/Profile" asChild>
           <TouchableOpacity style={styles.backButton}>
             <Text style={styles.backButtonText}>&lt;</Text>
           </TouchableOpacity>
@@ -14,15 +38,10 @@ export default function EditNumberPage() {
         <Text style={styles.headerTitle}>Edit Number</Text>
       </View>
       <View style={styles.contentContainer}>
-        <Text style={styles.currentValue}>+63 912 345 6789</Text>
-        <Text style={styles.label}>Mobile Number</Text>
-        <TextInput style={styles.input} placeholder="New Mobile Number" keyboardType="phone-pad" />
-        <TextInput style={styles.input} placeholder="Confirm Mobile Number" keyboardType="phone-pad" />
-        <Link href="/profile/Save" asChild>
-          <TouchableOpacity style={styles.saveButton}>
-            <Text style={styles.saveButtonText}>Save</Text>
-          </TouchableOpacity>
-        </Link>
+        <TextInput style={styles.input} placeholder="New Mobile Number" value={phone} onChangeText={setPhone} keyboardType="phone-pad" />
+        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+          <Text style={styles.saveButtonText}>Save</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -53,17 +72,6 @@ const styles = StyleSheet.create({
   contentContainer: {
     padding: 20,
     alignItems: 'center',
-  },
-  currentValue: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#007100',
-    marginBottom: 10,
-  },
-  label: {
-    fontSize: 16,
-    color: '#888888',
-    marginBottom: 20,
   },
   input: {
     width: '80%',

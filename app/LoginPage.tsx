@@ -1,22 +1,45 @@
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import { Link } from 'expo-router';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image } from 'react-native';
+import { Link, useRouter } from 'expo-router';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 export default function LoginPage() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const router = useRouter();
+
+  const handleLogin = async () => {
+    try {
+      // const response = await axios.post('http://localhost:8000/api/login/', {
+      //   email: email,
+      //   password: password,
+      // });
+
+      // const token = response.data.token; 
+      // await AsyncStorage.setItem('token', token);
+
+      // console.log(response.data)
+      // Alert.alert('Success', 'Login successful');
+      router.push('./home/HomeScreen');
+      
+    } catch (error) {
+      Alert.alert('Error', 'Login failed');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Link href="/" asChild>
         <TouchableOpacity style={styles.backButton}>
-          <Text style={styles.backButtonText}>&lt;</Text>
+          <Icon name="chevron-back" size={24} color="#4F4F4F" />
         </TouchableOpacity>
       </Link>
-      <TextInput style={styles.input} placeholder="Email" keyboardType="email-address" />
-      <TextInput style={styles.input} placeholder="Password" secureTextEntry />
-      <Link href="profile/Profile" asChild>
-      <TouchableOpacity style={styles.loginButton}>
+      <Image source={require('../assets/images/AIDA - Logo.png')} style={styles.logo} />
+      <TextInput style={styles.input} placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" />
+      <TextInput style={styles.input} placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry />
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}> 
         <Text style={styles.loginButtonText}>Login</Text>
-        </TouchableOpacity>
-      </Link>
+      </TouchableOpacity>
       <View style={styles.separatorContainer}>
         <View style={styles.separatorLine} />
         <Text style={styles.separatorText}>or</Text>
@@ -25,7 +48,7 @@ export default function LoginPage() {
       <TouchableOpacity style={styles.googleButton}>
         <Text style={styles.googleButtonText}>Sign in with Google</Text>
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => router.push('./password/ForgotPassword')}>
         <Text style={styles.forgotPasswordText}>Forgot Password</Text>
       </TouchableOpacity>
     </View>
@@ -42,9 +65,12 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     marginBottom: 20,
   },
-  backButtonText: {
-    color: '#4F4F4F',
-    fontSize: 24,
+  logo: {
+    width: 160,  // Adjust the width as needed
+    height: 160,  // Adjust the height as needed
+    alignSelf: 'center',
+    marginBottom: 30,
+    marginTop: 40,
   },
   input: {
     width: '80%',

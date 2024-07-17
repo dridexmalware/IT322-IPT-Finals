@@ -1,12 +1,36 @@
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import { Link } from 'expo-router';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+// import axios from 'axios';
+import { Link, useRouter } from 'expo-router';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function EditNamePage() {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const router = useRouter();
+
+  const handleSave = async () => {
+    try {
+      // const token = await AsyncStorage.getItem('token');
+      // const response = await axios.put('http://localhost:8000/api/user/', {
+      //   first_name: firstName,
+      //   last_name: lastName,
+      // }, {
+      //   headers: {
+      //     'Authorization': `Token ${token}`, // Include the auth token here
+      //   }
+      // });
+      // Alert.alert('Success', 'Name updated');
+      router.push('/profile/Save'); // Navigate to profile page after successful update
+    } catch (error) {
+      Alert.alert('Error', 'Failed to update name');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Link href="/profile/edit-profile" asChild>
+        <Link href="/profile/Profile" asChild>
           <TouchableOpacity style={styles.backButton}>
             <Text style={styles.backButtonText}>&lt;</Text>
           </TouchableOpacity>
@@ -14,15 +38,11 @@ export default function EditNamePage() {
         <Text style={styles.headerTitle}>Edit Name</Text>
       </View>
       <View style={styles.contentContainer}>
-        <Text style={styles.currentValue}>Dario Cruz Miñoza</Text>
-        <Text style={styles.label}>Full Name</Text>
-        <TextInput style={styles.input} placeholder="New First Name" />
-        <TextInput style={styles.input} placeholder="New Last Name" />
-        <Link href="/profile/Save" asChild>
-          <TouchableOpacity style={styles.saveButton}>
-            <Text style={styles.saveButtonText}>Save</Text>
-          </TouchableOpacity>
-        </Link>
+        <TextInput style={styles.input} placeholder="New First Name" value={firstName} onChangeText={setFirstName} />
+        <TextInput style={styles.input} placeholder="New Last Name" value={lastName} onChangeText={setLastName} />
+        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+          <Text style={styles.saveButtonText}>Save</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -53,17 +73,6 @@ const styles = StyleSheet.create({
   contentContainer: {
     padding: 20,
     alignItems: 'center',
-  },
-  currentValue: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#007100',
-    marginBottom: 10,
-  },
-  label: {
-    fontSize: 16,
-    color: '#888888',
-    marginBottom: 20,
   },
   input: {
     width: '80%',

@@ -5,11 +5,12 @@ import { Link } from 'expo-router';
 export default function SaveConfirmationPage() {
   return (
     <View style={styles.container}>
-      <Image source={require('../../assets/images/confirmreport.png')} style={styles.checkImage} />
-      <Text style={styles.confirmationText}>Saved Information</Text>
+      <Image source={require('../../assets/images/check.png')} style={styles.checkImage} />
+      <Text style={styles.confirmationText}>Report Submitted</Text>
+      <Text style={styles.subtitleText}>Don't worry - the help is on its way!</Text>
       <Link href="../home/HomeScreen" asChild>
         <TouchableOpacity style={styles.backButton}>
-          <Text style={styles.backButtonText}>Back to Profile</Text>
+          <Text style={styles.backButtonText}>Done</Text>
         </TouchableOpacity>
       </Link>
     </View>
@@ -36,6 +37,12 @@ const styles = StyleSheet.create({
     color: '#007100',
     textAlign: 'center',
     marginBottom: 10,
+  },
+  subtitleText: {
+    fontSize: 16,
+    color: '#007100',
+    textAlign: 'center',
+    marginBottom: 30,
   },
   backButton: {
     backgroundColor: '#007100',

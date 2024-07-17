@@ -1,12 +1,38 @@
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import { Link } from 'expo-router';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+// import axios from 'axios';
+import { Link, useRouter } from 'expo-router';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function EditAddressPage() {
+  const [barangay, setBarangay] = useState('');
+  const [city, setCity] = useState('');
+  const router = useRouter(); // Initialize router for navigation
+
+  const handleSave = async () => {
+    try {
+    //   const token = await AsyncStorage.getItem('token'); // Retrieve token from AsyncStorage
+    //   const response = await axios.put('http://localhost:8000/api/user/', {
+    //     profile: {
+    //       barangay: barangay,
+    //       city: city,
+    //     },
+    //   }, {
+    //     headers: {
+    //       'Authorization': `Token ${token}`, // Include the token in headers
+    //     }
+    //   });
+    //   Alert.alert('Success', 'Address updated');
+      router.push('/profile/Save'); // Navigate to profile page after successful update
+    } catch (error) {
+      Alert.alert('Error', 'Failed to update address');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Link href="/profile/edit-profile" asChild>
+        <Link href="/profile/Profile" asChild>
           <TouchableOpacity style={styles.backButton}>
             <Text style={styles.backButtonText}>&lt;</Text>
           </TouchableOpacity>
@@ -14,15 +40,11 @@ export default function EditAddressPage() {
         <Text style={styles.headerTitle}>Edit Address</Text>
       </View>
       <View style={styles.contentContainer}>
-        <Text style={styles.currentValue}>Poblacion, El Salvador City</Text>
-        <Text style={styles.label}>Address</Text>
-        <TextInput style={styles.input} placeholder="New Barangay" />
-        <TextInput style={styles.input} placeholder="New Town/City" />
-        <Link href="/profile/Save" asChild>
-          <TouchableOpacity style={styles.saveButton}>
-            <Text style={styles.saveButtonText}>Save</Text>
-          </TouchableOpacity>
-        </Link>
+        <TextInput style={styles.input} placeholder="New Barangay" value={barangay} onChangeText={setBarangay} />
+        <TextInput style={styles.input} placeholder="New Town/City" value={city} onChangeText={setCity} />
+        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+          <Text style={styles.saveButtonText}>Save</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
