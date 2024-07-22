@@ -1,21 +1,37 @@
-// HomeScreen.js
-import React, { useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
-import { useRouter } from 'expo-router';
-import NavBar from '../component/NavBar'; 
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView, Alert, ImageBackground } from 'react-native';
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import NavBar from '../component/NavBar';
 
-export const HomeScreen = () => {
+const HomeScreen = () => {
   const profilePic = require('../../assets/images/profilepic.jpg');
-  const logo = require('../../assets/images/white logo.png'); 
-  const rectangleImage = require('../../assets/images/Rectangle 1.png'); 
-  const sunCloudImage = require('../../assets/images/Sun cloud angled rain.png'); 
-  const fireImage = require('../../assets/images/fire logo.png');
-  const medicalImage = require('../../assets/images/health logo.png');
-  const floodImage = require('../../assets/images/flood logo.png');
-  const crimeImage = require('../../assets/images/crime logo.png');
+  const logo = require('../../assets/images/white logo.png');
+  const rectangleImage = require('../../assets/images/Rectangle_1.png');
+  const sunCloudImage = require('../../assets/images/Sun_cloud_angled_rain.png');
+  const fireImage = require('../../assets/images/fire_logo.png');
+  const medicalImage = require('../../assets/images/health_logo.png');
+  const floodImage = require('../../assets/images/flood_logo.png');
+  const crimeImage = require('../../assets/images/crime_logo.png');
+  const overlayIcon = require('../../assets/images/white logo.png');
 
   const [activePage, setActivePage] = useState('Home');
+  const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const router = useRouter();
+  const { capturedImage: paramCapturedImage } = useLocalSearchParams();
+
+  useEffect(() => {
+    if (paramCapturedImage) {
+      if (typeof paramCapturedImage === 'string') {
+        setCapturedImage(paramCapturedImage);
+      } else if (Array.isArray(paramCapturedImage) && paramCapturedImage.length > 0) {
+        setCapturedImage(paramCapturedImage[0]);
+      }
+    }
+  }, [paramCapturedImage]);
+
+  const handleCameraOpen = () => {
+    router.push('/camera/CameraScreen'); // Ensure this path is correct and exists
+  };
 
   return (
     <View style={styles.container}>
@@ -30,7 +46,7 @@ export const HomeScreen = () => {
           <Image source={sunCloudImage} style={styles.sunCloudImage} />
         </View>
 
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.welcomeContainer}
           onPress={() => router.push('/profile/Profile')}
         >
@@ -41,37 +57,45 @@ export const HomeScreen = () => {
           <Image source={profilePic} style={styles.profilePic} />
         </TouchableOpacity>
 
-        <TouchableOpacity 
-          style={styles.centerButton}
-          onPress={() => router.push('../reporting/AiReport')}
-        >
-          <Image source={logo} style={styles.logo} />
-        </TouchableOpacity>
+        {capturedImage ? (
+          <ImageBackground source={{ uri: capturedImage }} style={styles.capturedImage}>
+            <TouchableOpacity style={styles.overlayButton} onPress={() => console.log('Overlay button pressed!')}>
+              <Image source={overlayIcon} style={styles.overlayIcon} />
+            </TouchableOpacity>
+          </ImageBackground>
+        ) : (
+          <TouchableOpacity
+            style={styles.centerButton}
+            onPress={handleCameraOpen}
+          >
+            <Image source={logo} style={styles.logo} />
+          </TouchableOpacity>
+        )}
 
         <Text style={styles.incidentLabel}>Report other incidents</Text>
         <View style={styles.tileContainer}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.tile, styles.fireTile]}
             onPress={() => router.push('../reporting/FireReport')}
           >
             <Image source={fireImage} style={styles.fireTileImage} />
             <Text style={styles.tileLabel}>Fire</Text>
           </TouchableOpacity>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.tile, styles.medicalTile]}
             onPress={() => router.push('../reporting/MedicalReport')}
           >
             <Image source={medicalImage} style={styles.tileImage} />
             <Text style={styles.tileLabel}>Medical</Text>
           </TouchableOpacity>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.tile, styles.floodTile]}
             onPress={() => router.push('../reporting/FloodReport')}
           >
             <Image source={floodImage} style={styles.tileImage} />
             <Text style={styles.tileLabel}>Flood</Text>
           </TouchableOpacity>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.tile, styles.crimeTile]}
             onPress={() => router.push('../reporting/CrimeReport')}
           >
@@ -180,6 +204,21 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
   },
+  capturedImage: {
+    width: '100%',
+    height: 400,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  overlayButton: {
+    position: 'absolute',
+    bottom: 20,
+    alignSelf: 'center',
+  },
+  overlayIcon: {
+    width: 50,
+    height: 50,
+  },
   incidentLabel: {
     fontSize: 18,
     alignContent: 'flex-start',
@@ -222,8 +261,8 @@ const styles = StyleSheet.create({
     height: 40,
   },
   fireTileImage: {
-    width: 31, // Adjust the width as needed
-    height: 42, // Adjust the height as needed
+    width: 31,
+    height: 42,
   },
 });
 

@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image } from 'rea
 import { TextInput } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useRouter } from 'expo-router';
+import * as ImagePicker from 'expo-image-picker'; // Import ImagePicker
 
 const FloodSOS = () => {
   const [incident, setIncident] = React.useState("Flooding");
@@ -13,8 +14,26 @@ const FloodSOS = () => {
   const [landmark, setLandmark] = React.useState("");
   const [barangay, setBarangay] = React.useState("");
   const [townCity, setTownCity] = React.useState("");
+  const [image, setImage] = React.useState<string | null>(null); // State for image
 
   const router = useRouter();
+
+  const openCamera = async () => {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status === 'granted') {
+      let result = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        setImage(result.assets[0].uri);
+      }
+    } else {
+      alert('Camera permissions are required to use this feature.');
+    }
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -29,15 +48,16 @@ const FloodSOS = () => {
       </View>
       <TouchableOpacity 
         style={styles.uploadContainer} 
-        onPress={() => {
-          // Handle click event here
-          alert('Upload button clicked!');
-        }}
+        onPress={openCamera} // Use openCamera to pick an image
       >
-        <Image
-          source={require('../../assets/images/upload.png')} // Ensure this path is correct
-          style={styles.uploadImage}
-        />
+        {image ? (
+          <Image source={{ uri: image }} style={styles.uploadedImage} />
+        ) : (
+          <Image
+            source={require('../../assets/images/upload.png')} // Ensure this path is correct
+            style={styles.uploadImage}
+          />
+        )}
       </TouchableOpacity>
       <TextInput
         label="Incident"
@@ -125,11 +145,17 @@ const styles = StyleSheet.create({
     height: 150,
     borderRadius: 5,
     backgroundColor: '#F2F2F2',
+    overflow: 'hidden',
   },
   uploadImage: {
     width: 70, 
     height: 70, 
     resizeMode: 'contain', 
+  },
+  uploadedImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
   },
   input: {
     marginBottom: 18,
